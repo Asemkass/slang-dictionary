@@ -5,10 +5,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const searchBtn = document.getElementById("searchBtn");
     const searchResult = document.getElementById("searchResult");
 
-    let slangData = {};
+    let slangData = {}; 
     let allWords = {}; 
 
-    
     try {
         const response = await fetch("slang.json");
         slangData = await response.json();
@@ -19,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         tableBody.innerHTML = "<tr><td colspan='3'>Ошибка загрузки данных</td></tr>";
     }
 
-    
+    // Load categories into sidebar
     function loadCategories() {
         categoryList.innerHTML = ""; 
         const allCategories = ["Все сленги", ...Object.keys(slangData)];
@@ -44,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    
+    // Create a combined category for all words
     function createAllSlangCategory() {
         allWords = {};
         Object.values(slangData).forEach(category => {
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    
+    // Display words in the table
     function displaySlang(words) {
         tableBody.innerHTML = Object.keys(words)
             .map(word => `
@@ -73,17 +72,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    
+    // Search functionality
     searchBtn.addEventListener("click", () => {
         const inputWord = searchInput.value.trim().toLowerCase();
         let foundWord = null;
         let foundCategory = null;
 
         Object.keys(slangData).forEach(category => {
-            if (slangData[category][inputWord]) {
-                foundWord = slangData[category][inputWord];
-                foundCategory = category;
-            }
+            Object.keys(slangData[category]).forEach(word => {
+                if (word.toLowerCase() === inputWord) {
+                    foundWord = slangData[category][word];
+                    foundCategory = category;
+                }
+            });
         });
 
         searchResult.textContent = foundWord
